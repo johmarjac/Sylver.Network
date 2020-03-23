@@ -11,8 +11,7 @@ namespace Sylver.Network.Tests.Data
 {
     public sealed class NetPacketParserTests
     {
-        private readonly IPacketProcessor _packetProcessor;
-        private NetPacketParser _packetParser;
+        private IPacketProcessor _packetProcessor;
         private readonly byte[] _buffer;
         private readonly byte[] _bufferHeader;
         private readonly byte[] _bufferContent;
@@ -40,7 +39,6 @@ namespace Sylver.Network.Tests.Data
         [InlineData(128)]
         public void ParseIncomingDataTest(int bytesTransfered)
         {
-            _packetParser = new NetPacketParser(_packetProcessor);
             var token = new NetDataToken();
             int numberOfReceivesNeeded = (_buffer.Length / bytesTransfered) + 1;
             var receviedMessages = new List<byte[]>();
@@ -49,7 +47,7 @@ namespace Sylver.Network.Tests.Data
             {
                 byte[] incomingBuffer = _buffer.Skip(i * bytesTransfered).Take(bytesTransfered).ToArray();
 
-                IEnumerable<byte[]> messages = _packetParser.ParseIncomingData(token, incomingBuffer, Math.Min(bytesTransfered, incomingBuffer.Length));
+                IEnumerable<byte[]> messages = _packetProcessor.ParseIncomingData(token, incomingBuffer, Math.Min(bytesTransfered, incomingBuffer.Length));
 
                 if (messages.Any())
                 {
@@ -70,7 +68,7 @@ namespace Sylver.Network.Tests.Data
         [InlineData(128)]
         public void ParseIncomingDataWithHeaderTest(int bytesTransfered)
         {
-            _packetParser = new NetPacketParser(new DefaultNetPacketProcessor(includeHeader: true));
+            _packetProcessor = new DefaultNetPacketProcessor(includeHeader: true);
 
             var token = new NetDataToken();
             int numberOfReceivesNeeded = (_buffer.Length / bytesTransfered) + 1;
@@ -80,7 +78,7 @@ namespace Sylver.Network.Tests.Data
             {
                 byte[] incomingBuffer = _buffer.Skip(i * bytesTransfered).Take(bytesTransfered).ToArray();
 
-                IEnumerable<byte[]> messages = _packetParser.ParseIncomingData(token, incomingBuffer, Math.Min(bytesTransfered, incomingBuffer.Length));
+                IEnumerable<byte[]> messages = _packetProcessor.ParseIncomingData(token, incomingBuffer, Math.Min(bytesTransfered, incomingBuffer.Length));
 
                 if (messages.Any())
                 {
@@ -97,10 +95,9 @@ namespace Sylver.Network.Tests.Data
         [Fact]
         public void ParseIncomingDataWithInvalidSizeTest()
         {
-            _packetParser = new NetPacketParser(_packetProcessor);
             var token = new NetDataToken();
 
-            Assert.Throws<InvalidOperationException>(() => _packetParser.ParseIncomingData(token, _invalidBuffer, 32));
+            Assert.Throws<InvalidOperationException>(() => _packetProcessor.ParseIncomingData(token, _invalidBuffer, 32));
         }
     }
 }

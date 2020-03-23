@@ -11,8 +11,7 @@ namespace Sylver.Network.Infrastructure
 {
     internal abstract class NetReceiver : INetReceiver
     {
-        private readonly NetPacketParser _packetParser;
-        private readonly IPacketProcessor _packetProcessor;
+        private IPacketProcessor _packetProcessor;
         private bool _disposedValue;
 
         /// <summary>
@@ -21,14 +20,13 @@ namespace Sylver.Network.Infrastructure
         /// <param name="packetProcessor">Default packet processor.</param>
         public NetReceiver(IPacketProcessor packetProcessor)
         {
-            _packetParser = new NetPacketParser(packetProcessor);
             _packetProcessor = packetProcessor;
         }
 
         /// <inheritdoc />
         public void SetPacketProcessor(IPacketProcessor packetProcessor)
         {
-            _packetParser.PacketProcessor = packetProcessor;
+            _packetProcessor = packetProcessor;
         }
 
         /// <inheritdoc />
@@ -70,7 +68,7 @@ namespace Sylver.Network.Infrastructure
             {
                 if (socketAsyncEvent.SocketError == SocketError.Success)
                 {
-                    IEnumerable<byte[]> messages = _packetParser.ParseIncomingData(clientToken, socketAsyncEvent.Buffer, socketAsyncEvent.BytesTransferred);
+                    IEnumerable<byte[]> messages = _packetProcessor.ParseIncomingData(clientToken, socketAsyncEvent.Buffer, socketAsyncEvent.BytesTransferred);
 
                     if (messages.Any())
                     {

@@ -1,6 +1,6 @@
 ﻿namespace Sylver.Network.Data.Internal
 {
-    internal class NetDataToken
+    public class NetDataToken
     {
         /// <summary>
         /// Gets or sets the message header data.

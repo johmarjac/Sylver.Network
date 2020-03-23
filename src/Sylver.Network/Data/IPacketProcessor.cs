@@ -1,4 +1,7 @@
-﻿namespace Sylver.Network.Data
+﻿using Sylver.Network.Data.Internal;
+using System.Collections.Generic;
+
+namespace Sylver.Network.Data
 {
     /// <summary>
     /// Defines the behavior of a packet processor and how the packet should be handled.
@@ -28,5 +31,14 @@
         /// <param name="buffer">Input buffer</param>
         /// <returns>New packet</returns>
         INetPacketStream CreatePacket(byte[] buffer);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <param name="buffer"></param>
+        /// <param name="bytesTransfered"></param>
+        /// <returns></returns>
+        IEnumerable<byte[]> ParseIncomingData(NetDataToken token, byte[] buffer, int bytesTransfered);
     }
 }
