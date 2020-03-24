@@ -1,4 +1,6 @@
-﻿namespace Sylver.Network.Data.Internal
+﻿using System.Collections.Generic;
+
+namespace Sylver.Network.Data.Internal
 {
     public class NetDataToken
     {
@@ -25,7 +27,9 @@
         /// <summary>
         /// Gets or sets the received message data.
         /// </summary>
-        public byte[] MessageData { get; set; }
+        public byte[] MessageData;
+
+        public List<byte> MessageData2;
 
         /// <summary>
         /// Gets or sets the data start offset.
@@ -47,6 +51,7 @@
             HeaderData = null;
             MessageData = null;
             MessageSize = null;
+            MessageData2 = null;
         }
     }
 }
